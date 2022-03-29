@@ -9,10 +9,12 @@
 
 "use strict";
 
+
+
 var morphingEffect = {
-    duration: animationTime(250),
+    duration: animationTime(200),
     loadConfig: function () {
-        morphingEffect.duration = animationTime(250);
+        morphingEffect.duration = animationTime(200);
     },
 
     handleFrameGeometryChanged: function (window, oldGeometry) {
@@ -39,12 +41,12 @@ var morphingEffect = {
         }
 
         //don't resize it "too much", set as four times
-        if ((newGeometry.width / oldGeometry.width) > 4 ||
+       /* if ((newGeometry.width / oldGeometry.width) > 4 ||
             (oldGeometry.width / newGeometry.width) > 4 ||
             (newGeometry.height / oldGeometry.height) > 4 ||
             (oldGeometry.height / newGeometry.height) > 4) {
             return;
-        }
+        }*/
 
         window.setData(Effect.WindowForceBackgroundContrastRole, true);
         window.setData(Effect.WindowForceBlurRole, true);
@@ -74,7 +76,8 @@ var morphingEffect = {
             window.moveAnimation = animate({
                 window: window,
                 duration: morphingEffect.duration,
-                animations: [{
+                animations: [
+                {
                     type: Effect.Size,
                     to: {
                         value1: newGeometry.width,
@@ -84,7 +87,8 @@ var morphingEffect = {
                         value1: oldGeometry.width,
                         value2: oldGeometry.height
                     }
-                }, {
+                }, 
+				{
                     type: Effect.Position,
                     to: {
                         value1: newGeometry.x + newGeometry.width / 2,
@@ -104,17 +108,25 @@ var morphingEffect = {
             couldRetarget = retarget(window.fadeAnimation[0], 1.0, morphingEffect.duration);
         }
 
-        /*if (!couldRetarget) {
-            window.fadeAnimation = animate({
-                window: window,
-                duration: morphingEffect.duration,
-                animations: [{
-                    type: Effect.CrossFadePrevious,
-                    to: 1.0,
-                    from: 0.0
-                }]
-            });
-        }*/
+        //if (oldGeometry.width != newGeometry.width || oldGeometry.height != newGeometry.height) {
+        //don't resize it "too much", set as four times
+        if ((newGeometry.width / oldGeometry.width) > 1.5 ||
+            (oldGeometry.width / newGeometry.width) > 1.5 ||
+            (newGeometry.height / oldGeometry.height) > 1.5 ||
+            (oldGeometry.height / newGeometry.height) > 1.5) {
+                if (!couldRetarget) {
+                    window.fadeAnimation = animate({
+                        window: window,
+                        duration: morphingEffect.duration,
+                        animations: [{
+                            type: Effect.Opacity,
+                            from: 0.0,
+                            to: 1.0,
+                            curve: QEasingCurve.InQuad
+                        }]
+                    });
+                }
+		}
     },
 
     init: function () {
